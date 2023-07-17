@@ -1,0 +1,61 @@
+from tkinter import *
+import time
+import datetime
+from pygame import mixer
+
+# Create the Tkinter window
+root = Tk()
+root.title('Alarm Clock')
+
+# Function to set the alarm
+def setalarm():
+    alarmtime = f"{hrs.get()}:{mins.get()}:{secs.get()}"
+    print(alarmtime)
+    if alarmtime != "::":
+        alarmclock(alarmtime)
+
+# Function to run the alarm clock
+def alarmclock(alarmtime):
+    while True:
+        time.sleep(1)
+        time_now = datetime.datetime.now().strftime("%H:%M:%S")
+        print(time_now)
+        if time_now == alarmtime:
+            # Display the wake-up message on the window
+            Label(root, font=("red", 20, 'bold'),
+                  text="WAKE UP! IT'S TIME UP NOW ", bg="black", fg="red").grid(row=6, columnspan=3)
+            print("wake up!")
+            # Initialize the mixer for audio playback
+            mixer.init()
+            mixer.music.load(r'ACM.wav')  # Load the alarm sound file
+            mixer.music.play()  # Play the alarm sound
+            break
+
+# Create StringVar variables to store user input
+hrs = StringVar()
+mins = StringVar()
+secs = StringVar()
+
+# Create and display labels and entry fields for user input
+Label(root, font=('red', 12, 'italic'),
+      text="Take a short nap!").grid(row=1, columnspan=3)
+
+hrbtn = Entry(root, textvariable=hrs, width=5, font=('red', 20, 'bold'))
+hrbtn.grid(row=2, column=1)
+
+Entry(root, textvariable=mins,
+      width=5, font=('red', 20, 'bold')).grid(row=2, column=2)
+
+Entry(root, textvariable=secs,
+      width=5, font=('red', 20, 'bold')).grid(row=2, column=3)
+
+# Create and display the "set alarm" button
+Button(root, text="set alarm", command=setalarm, bg='black',
+       fg="red", font=('red', 20, 'bold')).grid(row=4, columnspan=3)
+
+# Create a label to display remaining time (not used in the provided code)
+timeleft = Label(root, font=('red', 20, 'bold'))
+timeleft.grid()
+
+# Start the Tkinter event loop
+mainloop()
