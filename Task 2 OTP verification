@@ -1,0 +1,83 @@
+import random
+import smtplib
+import tkinter as tk
+from tkinter import messagebox
+
+# Generate a random OTP
+def generate_otp(length=6):
+    digits = "0123456789"
+    return ''.join(random.choice(digits) for _ in range(length))
+
+# Function to send OTP email
+def send_otp_email(recipient_email, otp):
+    smtp_server = 'smtp.gmail.com'
+    smtp_port = 587
+    sender_email = 'your_email_ID@gmail.com'
+    sender_password = 'your_app_Password'
+
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+
+            otp_message = f"Your OTP for Verification: {otp}"
+            subject = "OTP for Verification"
+            email_text = f"Subject: {subject}\n\n{otp_message}"
+
+            server.sendmail(sender_email, recipient_email, email_text)
+            print("OTP email has been sent to your email address.")
+    except Exception as e:
+        print("Error:", e)
+
+# Function to verify OTP
+def verify_otp():
+    entered_otp = otp_entry.get().strip()  # Remove leading/trailing spaces
+
+    if entered_otp == generated_otp:
+        messagebox.showinfo("OTP Verification", "OTP Successfully Verified!")
+        root.destroy()  # Close the GUI window
+    else:
+        messagebox.showerror("OTP Verification", "Invalid OTP. Please try again.")
+
+# Step 1: GUI to get recipient email
+def get_email():
+    global recipient_email
+    recipient_email = email_entry.get().strip()  # Remove leading/trailing spaces
+    global generated_otp
+    generated_otp = generate_otp()
+    send_otp_email(recipient_email, generated_otp)
+
+    email_label.destroy()
+    email_entry.destroy()
+    submit_button.destroy()
+
+    # Step 2: GUI for OTP verification
+    otp_label = tk.Label(root, text="Enter OTP:")
+    otp_label.pack()
+
+    global otp_entry
+    otp_entry = tk.Entry(root)
+    otp_entry.pack()
+
+    verify_button = tk.Button(root, text="Verify OTP", command=verify_otp)
+    verify_button.pack()
+
+# Main GUI setup
+root = tk.Tk()
+root.title("OTP Verification")
+
+# Set window dimensions (width x height)
+window_width = 10
+window_height = 15
+root.geometry(f"{window_width*40}x{window_height*35}")  # Conversion factor for cm to pixels
+
+email_label = tk.Label(root, text="Enter your email:")
+email_label.pack()
+
+email_entry = tk.Entry(root)
+email_entry.pack()
+
+submit_button = tk.Button(root, text="Submit", command=get_email)
+submit_button.pack()
+
+root.mainloop()
